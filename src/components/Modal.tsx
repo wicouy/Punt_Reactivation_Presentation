@@ -292,7 +292,7 @@ export default function Modal({ posts, currentIndex, onNavigate, onClose }: Prop
       style={{ transitionDuration: '320ms' }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-purple-dark/92 backdrop-blur-xl cursor-pointer" onClick={handleClose} />
+      <div className="absolute inset-0 bg-purple-dark/[0.97] backdrop-blur-2xl cursor-pointer" onClick={handleClose} />
 
       {/* Glow orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -307,7 +307,7 @@ export default function Modal({ posts, currentIndex, onNavigate, onClose }: Prop
         className={`relative z-10 w-full mx-4 flex flex-col transition-all duration-320 ${panelVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-[0.97]'}`}
         style={{ maxWidth: '72rem', maxHeight: '95vh', transitionDuration: '320ms' }}
       >
-        <div className="flex flex-col bg-purple-dark/97 border border-magenta/30 rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(139,31,212,0.35),0_0_0_1px_rgba(192,38,211,0.15)]"
+        <div className="flex flex-col bg-purple-dark border border-magenta/30 rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(139,31,212,0.35),0_0_0_1px_rgba(192,38,211,0.15)]"
           style={{ maxHeight: '95vh' }}>
 
           {/* Top bar */}
