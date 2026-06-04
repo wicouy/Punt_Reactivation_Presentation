@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { posts, type Post } from '../data/posts'
+import { posts } from '../data/posts'
 import PostCard from './PostCard'
 import Modal from './Modal'
 
@@ -8,7 +8,7 @@ const PAGE_SIZE = 4
 export default function InfiniteScroll() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [loading, setLoading] = useState(false)
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const loadMore = useCallback(() => {
@@ -24,9 +24,7 @@ export default function InfiniteScroll() {
     const el = sentinelRef.current
     if (!el) return
     const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) loadMore()
-      },
+      ([entry]) => { if (entry.isIntersecting) loadMore() },
       { rootMargin: '200px' }
     )
     obs.observe(el)
@@ -51,60 +49,56 @@ export default function InfiniteScroll() {
           Full strategy for recovering lapsed players — segmentation logic, offer mechanics, channel cadence, control groups, and measurement framework.
         </p>
         <div className="flex justify-center gap-3 mt-5">
-          <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
-            {posts.length} sections
-          </span>
+          <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">{posts.length} sections</span>
           <span className="text-magenta/30">·</span>
-          <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
-            6 segments
-          </span>
+          <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">6 segments</span>
           <span className="text-magenta/30">·</span>
-          <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
-            click any card to expand
-          </span>
+          <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">click any card to expand</span>
         </div>
       </div>
 
       {/* Feed */}
       <div className="flex flex-col gap-5">
         {visible.map((post, i) => (
-          <PostCard key={post.id} post={post} index={i} onOpen={setSelectedPost} />
+          <PostCard
+            key={post.id}
+            post={post}
+            index={i}
+            onOpen={() => setSelectedIndex(posts.findIndex(p => p.id === post.id))}
+          />
         ))}
       </div>
 
       {/* Sentinel */}
       <div ref={sentinelRef} className="h-4 mt-4" />
 
-      {/* Loading / done state */}
+      {/* Loading / done */}
       <div className="flex justify-center py-8">
         {loading ? (
           <div className="flex items-center gap-3">
             <div className="flex gap-1.5">
               {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="w-2 h-2 rounded-full bg-magenta animate-bounce"
-                  style={{ animationDelay: `${i * 100}ms` }}
-                />
+                <div key={i} className="w-2 h-2 rounded-full bg-magenta animate-bounce" style={{ animationDelay: `${i * 100}ms` }} />
               ))}
             </div>
-            <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
-              Loading
-            </span>
+            <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">Loading</span>
           </div>
         ) : done ? (
           <div className="text-center">
             <div className="w-16 h-[2px] bg-magenta/30 mx-auto mb-3" />
-            <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
-              End of Journey
-            </span>
+            <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">End of Journey</span>
           </div>
         ) : null}
       </div>
 
       {/* Cinema modal */}
-      {selectedPost && (
-        <Modal post={selectedPost} onClose={() => setSelectedPost(null)} />
+      {selectedIndex !== null && (
+        <Modal
+          posts={posts}
+          currentIndex={selectedIndex}
+          onNavigate={setSelectedIndex}
+          onClose={() => setSelectedIndex(null)}
+        />
       )}
     </main>
   )

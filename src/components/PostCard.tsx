@@ -4,7 +4,7 @@ import type { Post, PostContent, SegmentItem, TimelineItem } from '../data/posts
 interface Props {
   post: Post
   index: number
-  onOpen: (post: Post) => void
+  onOpen: () => void
 }
 
 const TAG_COLORS: Record<string, string> = {
@@ -360,10 +360,10 @@ export default function PostCard({ post, index, onOpen }: Props) {
     >
       <div
         className="bg-white/[0.03] border border-magenta/20 rounded-2xl p-6 md:p-8 card-hover glow-border cursor-pointer"
-        onClick={() => onOpen(post)}
+        onClick={() => onOpen()}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && onOpen(post)}
+        onKeyDown={(e) => e.key === 'Enter' && onOpen()}
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-5">
