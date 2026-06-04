@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import type { Post, PostContent, SegmentItem, TimelineItem } from '../data/posts'
 
 interface Props {
@@ -329,16 +329,23 @@ function renderContent(block: PostContent, idx: number) {
 }
 
 export default function PostCard({ post, index, onOpen }: Props) {
-  const ref = useRef<HTMLDivElement>(null)
+  const articleRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+  const [shimmer, setShimmer] = useState(false)
+  const [hovered, setHovered] = useState(false)
+  const [spot, setSpot] = useState({ x: 50, y: 50 })
 
+  // Intersection: fade-up + shimmer sweep
   useEffect(() => {
-    const el = ref.current
+    const el = articleRef.current
     if (!el) return
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setVisible(true)
+          setTimeout(() => setShimmer(true), 400)
+          setTimeout(() => setShimmer(false), 1100)
           obs.disconnect()
         }
       },
@@ -348,64 +355,132 @@ export default function PostCard({ post, index, onOpen }: Props) {
     return () => obs.disconnect()
   }, [])
 
+  // Mouse spotlight tracking
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    setSpot({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    })
+  }, [])
+
   const tagClass = TAG_COLORS[post.tag] ?? 'text-pink-vivid border-pink-vivid/40 bg-pink-vivid/10'
 
   return (
     <article
-      ref={ref}
+      ref={articleRef}
       className={`transition-all duration-700 ${
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
       style={{ transitionDelay: `${(index % 3) * 60}ms` }}
     >
+      {/* Outer glow ring — animated on hover */}
       <div
-        className="bg-white/[0.03] border border-magenta/20 rounded-2xl p-6 md:p-8 card-hover glow-border cursor-pointer"
-        onClick={() => onOpen()}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && onOpen()}
+        className={`relative rounded-2xl transition-all duration-300 ${
+          hovered
+            ? 'shadow-[0_0_0_1px_rgba(192,38,211,0.55),0_0_32px_rgba(139,31,212,0.25)]'
+            : 'shadow-[0_0_0_1px_rgba(192,38,211,0.18),0_2px_12px_rgba(0,0,0,0.3)]'
+        }`}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-5">
-          <div>
-            <span
-              className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-dm-mono uppercase tracking-[0.15em] border mb-3 ${tagClass}`}
-            >
-              {post.tag}
-            </span>
-            <h2 className="font-bebas text-2xl md:text-3xl tracking-wide leading-tight">
-              {post.title}{' '}
-              {post.titleAccent && <span className="text-pink-vivid">{post.titleAccent}</span>}
-            </h2>
-          </div>
-          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-magenta/10 border border-magenta/30 flex items-center justify-center font-dm-mono text-xs text-pink-vivid">
-            {String(post.id).padStart(2, '0')}
-          </div>
+        {/* Shimmer sweep overlay */}
+        <div
+          className={`pointer-events-none absolute inset-0 rounded-2xl overflow-hidden z-10 transition-opacity duration-200 ${shimmer ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(105deg, transparent 35%, rgba(224,64,251,0.12) 50%, rgba(255,255,255,0.06) 55%, transparent 65%)',
+              transform: shimmer ? 'translateX(100%)' : 'translateX(-100%)',
+              transition: shimmer ? 'transform 0.65s ease' : 'none',
+            }}
+          />
         </div>
 
-        {/* Summary */}
-        <p className="text-grey text-sm leading-relaxed mb-6 pb-5 border-b border-magenta/15">
-          {post.summary}
-        </p>
+        {/* Top accent bar — glows on hover */}
+        <div
+          className={`absolute top-0 left-6 right-6 h-[1px] rounded-full transition-all duration-300 z-10 ${
+            hovered
+              ? 'bg-gradient-to-r from-transparent via-magenta to-transparent opacity-80'
+              : 'bg-gradient-to-r from-transparent via-magenta/30 to-transparent opacity-40'
+          }`}
+        />
 
-        {/* Content blocks */}
-        <div className="flex flex-col gap-5">
-          {post.content.map((block, i) => renderContent(block, i))}
-        </div>
+        {/* Main card */}
+        <div
+          ref={cardRef}
+          className="relative bg-[#0f0520] border border-transparent rounded-2xl p-6 md:p-8 cursor-pointer overflow-hidden"
+          onClick={() => onOpen()}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && onOpen()}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onMouseMove={handleMouseMove}
+        >
+          {/* Mouse spotlight */}
+          <div
+            className={`pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300 ${hovered ? 'opacity-100' : 'opacity-0'}`}
+            style={{
+              background: `radial-gradient(500px circle at ${spot.x}% ${spot.y}%, rgba(139,31,212,0.13), transparent 60%)`,
+            }}
+          />
 
-        {/* Footer */}
-        <div className="mt-6 pt-4 border-t border-magenta/10 flex items-center justify-between">
-          <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
-            {post.readTime} min read
-          </span>
-          <div className="flex items-center gap-3">
-            <span className="font-dm-mono text-[9px] text-magenta/50 uppercase tracking-widest">
-              click to expand
-            </span>
-            <div className="flex gap-1">
-              {[...Array(post.readTime)].map((_, i) => (
-                <div key={i} className="w-1 h-1 rounded-full bg-magenta/50" />
-              ))}
+          {/* Subtle noise texture */}
+          <div
+            className="pointer-events-none absolute inset-0 rounded-2xl opacity-[0.025]"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+              backgroundSize: '150px',
+            }}
+          />
+
+          {/* Content */}
+          <div className="relative z-10">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-dm-mono uppercase tracking-[0.15em] border mb-3 transition-all duration-300 ${tagClass} ${hovered ? 'brightness-125' : ''}`}>
+                  {post.tag}
+                </span>
+                <h2 className="font-bebas text-2xl md:text-3xl tracking-wide leading-tight">
+                  {post.title}{' '}
+                  {post.titleAccent && <span className="text-pink-vivid">{post.titleAccent}</span>}
+                </h2>
+              </div>
+              <div className={`flex-shrink-0 w-10 h-10 rounded-full border flex items-center justify-center font-dm-mono text-xs transition-all duration-300 ${
+                hovered
+                  ? 'bg-magenta/25 border-magenta/60 text-pink-vivid shadow-[0_0_12px_rgba(192,38,211,0.4)]'
+                  : 'bg-magenta/10 border-magenta/30 text-pink-vivid'
+              }`}>
+                {String(post.id).padStart(2, '0')}
+              </div>
+            </div>
+
+            {/* Summary */}
+            <p className="text-grey text-sm leading-relaxed mb-6 pb-5 border-b border-magenta/15">
+              {post.summary}
+            </p>
+
+            {/* Content blocks */}
+            <div className="flex flex-col gap-5">
+              {post.content.map((block, i) => renderContent(block, i))}
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 pt-4 border-t border-magenta/10 flex items-center justify-between">
+              <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
+                {post.readTime} min read
+              </span>
+              <div className="flex items-center gap-3">
+                <span className={`font-dm-mono text-[9px] uppercase tracking-widest transition-all duration-300 ${hovered ? 'text-pink-vivid' : 'text-magenta/40'}`}>
+                  click to expand
+                </span>
+                <div className="flex gap-1">
+                  {[...Array(post.readTime)].map((_, i) => (
+                    <div key={i} className={`w-1 h-1 rounded-full transition-all duration-300 ${hovered ? 'bg-pink-vivid' : 'bg-magenta/50'}`} />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

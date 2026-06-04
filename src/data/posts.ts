@@ -222,8 +222,8 @@ export const posts: Post[] = [
     slug: 'offer-mechanics',
     tag: 'Offer Framework',
     title: 'OFFER',
-    titleAccent: 'MECHANICS',
-    summary: 'Segment-specific offer ladders across Day 1, 5, 8, 11–13 and exit.',
+    titleAccent: 'MECHANICS BY STAGE',
+    summary: 'Segment-specific offer ladders across Day 1, 5, 8, 11–13 and exit. Values illustrative — validate vs bonus cost, LTV, margin & compliance.',
     readTime: 5,
     content: [
       {
