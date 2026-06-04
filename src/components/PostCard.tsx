@@ -4,6 +4,7 @@ import type { Post, PostContent, SegmentItem, TimelineItem } from '../data/posts
 interface Props {
   post: Post
   index: number
+  onOpen: (post: Post) => void
 }
 
 const TAG_COLORS: Record<string, string> = {
@@ -327,7 +328,7 @@ function renderContent(block: PostContent, idx: number) {
   }
 }
 
-export default function PostCard({ post, index }: Props) {
+export default function PostCard({ post, index, onOpen }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
@@ -357,7 +358,13 @@ export default function PostCard({ post, index }: Props) {
       }`}
       style={{ transitionDelay: `${(index % 3) * 60}ms` }}
     >
-      <div className="bg-white/[0.03] border border-magenta/20 rounded-2xl p-6 md:p-8 card-hover glow-border">
+      <div
+        className="bg-white/[0.03] border border-magenta/20 rounded-2xl p-6 md:p-8 card-hover glow-border cursor-pointer"
+        onClick={() => onOpen(post)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && onOpen(post)}
+      >
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-5">
           <div>
@@ -391,10 +398,15 @@ export default function PostCard({ post, index }: Props) {
           <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
             {post.readTime} min read
           </span>
-          <div className="flex gap-1">
-            {[...Array(post.readTime)].map((_, i) => (
-              <div key={i} className="w-1 h-1 rounded-full bg-magenta/50" />
-            ))}
+          <div className="flex items-center gap-3">
+            <span className="font-dm-mono text-[9px] text-magenta/50 uppercase tracking-widest">
+              click to expand
+            </span>
+            <div className="flex gap-1">
+              {[...Array(post.readTime)].map((_, i) => (
+                <div key={i} className="w-1 h-1 rounded-full bg-magenta/50" />
+              ))}
+            </div>
           </div>
         </div>
       </div>

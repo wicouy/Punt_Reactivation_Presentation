@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { posts } from '../data/posts'
+import { posts, type Post } from '../data/posts'
 import PostCard from './PostCard'
+import Modal from './Modal'
 
 const PAGE_SIZE = 4
 
 export default function InfiniteScroll() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [loading, setLoading] = useState(false)
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null)
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const loadMore = useCallback(() => {
@@ -58,7 +60,7 @@ export default function InfiniteScroll() {
           </span>
           <span className="text-magenta/30">·</span>
           <span className="font-dm-mono text-[10px] text-grey uppercase tracking-widest">
-            scroll to explore
+            click any card to expand
           </span>
         </div>
       </div>
@@ -66,7 +68,7 @@ export default function InfiniteScroll() {
       {/* Feed */}
       <div className="flex flex-col gap-5">
         {visible.map((post, i) => (
-          <PostCard key={post.id} post={post} index={i} />
+          <PostCard key={post.id} post={post} index={i} onOpen={setSelectedPost} />
         ))}
       </div>
 
@@ -99,6 +101,11 @@ export default function InfiniteScroll() {
           </div>
         ) : null}
       </div>
+
+      {/* Cinema modal */}
+      {selectedPost && (
+        <Modal post={selectedPost} onClose={() => setSelectedPost(null)} />
+      )}
     </main>
   )
 }
