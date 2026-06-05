@@ -522,6 +522,37 @@ export const posts: Post[] = [
   },
   {
     id: 15,
+    slug: 'execution-rollout',
+    tag: 'Go-Live Requirements',
+    title: 'EXECUTION &',
+    titleAccent: 'ROLLOUT',
+    summary: 'A structured 4-week build sprint followed by a controlled, phased launch to manage risk.',
+    readTime: 3,
+    content: [
+      {
+        type: 'paragraph',
+        text: 'A great strategy only survives if it can be built and launched safely. The rollout must be phased to catch data latency issues, verify bonus triggers, and monitor support volume before exposing 100% of the active base.',
+      },
+      {
+        type: 'bullets',
+        items: [
+          { label: 'Week 1 — Foundations', desc: 'Finalise data feeds (last_purchase_date) and implement real-time suppression flags (RG, self-exclusion).' },
+          { label: 'Week 2 — CRM & Offers', desc: 'Build the multi-channel flow in Optimove. Generate and configure bonus mechanisms (capped bundles, free spins).' },
+          { label: 'Week 3 — UAT & QA', desc: 'Push test users through all 6 segment paths. Verify channel delivery, deep links, and offer redemption limits.' },
+          { label: 'Week 4 — Phased Launch', desc: 'Day 1: 10% volume. Day 4: 50% volume. Day 8+: 100% volume. Monitor crash rates and support tickets.' },
+        ],
+      },
+      {
+        type: 'cards',
+        items: [
+          { title: '⚠️ Risk 1: Data Latency', body: 'A player deposits but the data warehouse lags, causing a reactivation email to fire in error. Mitigation: Use real-time webhooks for the purchase exit event.' },
+          { title: '⚠️ Risk 2: Bonus Abuse', body: 'Bonus-sensitive segments find a way to repeat the offer. Mitigation: Hard-capping natively in the platform, strictly no extensions.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 16,
     slug: 'experimentation-plan',
     tag: 'Optimisation',
     title: 'EXPERIMENTATION',
@@ -551,7 +582,7 @@ export const posts: Post[] = [
     ],
   },
   {
-    id: 16,
+    id: 17,
     slug: 'kpis',
     tag: 'Measurement',
     title: 'KPIs &',
@@ -596,7 +627,7 @@ export const posts: Post[] = [
     ],
   },
   {
-    id: 17,
+    id: 18,
     slug: 'recommendation',
     tag: 'Final Recommendation',
     title: 'FINAL',
