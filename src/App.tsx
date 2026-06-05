@@ -13,7 +13,7 @@ export default function App() {
     return (
       <div className="min-h-screen bg-mesh bg-grid font-dm-sans flex items-center justify-center">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 flex flex-col gap-4 w-80">
-          <h1 className="text-white text-xl font-semibold text-center">Contraseña</h1>
+          <h1 className="text-white text-xl font-semibold text-center">Password</h1>
           <input
             type="password"
             value={input}
