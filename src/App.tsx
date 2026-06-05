@@ -25,15 +25,15 @@ export default function App() {
               }
             }}
             className="rounded-lg px-4 py-2 bg-white/20 text-white placeholder-white/50 outline-none border border-white/30 focus:border-white/60"
-            placeholder="Ingresá la contraseña"
+            placeholder="Enter password"
             autoFocus
           />
-          {error && <p className="text-red-400 text-sm text-center">Contraseña incorrecta</p>}
+          {error && <p className="text-red-400 text-sm text-center">Incorrect password</p>}
           <button
             onClick={() => { if (input === PASSWORD) setUnlocked(true); else setError(true) }}
             className="bg-white/20 hover:bg-white/30 text-white rounded-lg py-2 transition"
           >
-            Entrar
+            Enter
           </button>
         </div>
       </div>
