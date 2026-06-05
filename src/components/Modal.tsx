@@ -261,10 +261,12 @@ export default function Modal({ posts, currentIndex, onNavigate, onClose }: Prop
 
   // animate content swap on index change
   useEffect(() => {
-    setContentKey(currentIndex)
     setContentVisible(false)
-    scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' })
-    const t = setTimeout(() => setContentVisible(true), 0)
+    const t = setTimeout(() => {
+      setContentKey(currentIndex)
+      scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+      setContentVisible(true)
+    }, 120)
     return () => clearTimeout(t)
   }, [currentIndex])
 
@@ -302,7 +304,7 @@ export default function Modal({ posts, currentIndex, onNavigate, onClose }: Prop
 
       {/* Panel — wider + taller */}
       <div
-        className={`relative z-10 w-full mx-4 flex flex-col transition-all duration-320 ${panelVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-[0.97]'}`}
+        className={`relative z-10 w-full mx-4 flex flex-col transition-all duration-320 transform-gpu backface-hidden ${panelVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-6 scale-[0.97]'}`}
         style={{ maxWidth: '72rem', maxHeight: '95vh', transitionDuration: '320ms' }}
       >
         <div className="flex flex-col bg-purple-dark border border-magenta/30 rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(139,31,212,0.35),0_0_0_1px_rgba(192,38,211,0.15)]"
@@ -336,7 +338,7 @@ export default function Modal({ posts, currentIndex, onNavigate, onClose }: Prop
             className="overflow-y-auto scrollbar-thin flex-1"
           >
             <div
-              className={`px-8 md:px-12 py-9 transition-opacity duration-200 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}
+              className={`px-8 md:px-12 py-9 transition-all duration-200 transform-gpu backface-hidden ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
               key={contentKey}
             >
               {/* Post header */}

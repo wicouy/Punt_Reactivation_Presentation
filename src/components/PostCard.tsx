@@ -369,8 +369,8 @@ export default function PostCard({ post, index, onOpen }: Props) {
   return (
     <article
       ref={articleRef}
-      className={`transition-transform duration-700 ${
-        visible ? 'translate-y-0' : 'translate-y-8'
+      className={`transition-all duration-700 transform-gpu backface-hidden ${
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
       style={{ transitionDelay: `${(index % 3) * 60}ms` }}
     >
@@ -435,7 +435,7 @@ export default function PostCard({ post, index, onOpen }: Props) {
           />
 
           {/* Content */}
-          <div className={`relative z-10 transition-opacity duration-700 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="relative z-10">
             {/* Header */}
             <div className="flex items-start justify-between gap-4 mb-5">
               <div>
