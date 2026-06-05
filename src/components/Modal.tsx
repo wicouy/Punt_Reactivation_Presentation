@@ -261,12 +261,10 @@ export default function Modal({ posts, currentIndex, onNavigate, onClose }: Prop
 
   // animate content swap on index change
   useEffect(() => {
+    setContentKey(currentIndex)
     setContentVisible(false)
-    const t = setTimeout(() => {
-      setContentKey(currentIndex)
-      setContentVisible(true)
-      scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' })
-    }, 180)
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+    const t = setTimeout(() => setContentVisible(true), 0)
     return () => clearTimeout(t)
   }, [currentIndex])
 
@@ -338,9 +336,8 @@ export default function Modal({ posts, currentIndex, onNavigate, onClose }: Prop
             className="overflow-y-auto scrollbar-thin flex-1"
           >
             <div
-              className={`px-8 md:px-12 py-9 transition-all duration-180 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+              className={`px-8 md:px-12 py-9 transition-opacity duration-200 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}
               key={contentKey}
-              style={{ transitionDuration: '180ms' }}
             >
               {/* Post header */}
               <div className="mb-8">
