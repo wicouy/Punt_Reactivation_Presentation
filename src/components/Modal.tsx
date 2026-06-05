@@ -48,7 +48,7 @@ function TableBlock({ headers, rows }: { headers: string[]; rows: string[][] }) 
           {rows.map((row, ri) => (
             <tr key={ri} className="hover:bg-magenta/5 transition-colors">
               {row.map((cell, ci) => (
-                <td key={ci} className={`px-4 py-3 border-b border-magenta/10 last:border-b-0 align-top leading-relaxed ${ci === 0 ? 'font-semibold text-pink-light' : 'text-grey-light'}`}>{cell}</td>
+                <td key={ci} className={`px-4 py-3 border-b border-magenta/10 last:border-b-0 align-top leading-relaxed ${ci === 0 ? 'font-semibold text-pink-light whitespace-nowrap' : 'text-grey-light'}`}>{cell}</td>
               ))}
             </tr>
           ))}

@@ -102,22 +102,30 @@ export const posts: Post[] = [
     tag: 'Entry Logic',
     title: 'SUPPRESSION',
     titleAccent: 'LAYERS',
-    summary: 'Five-layer eligibility and suppression logic before any player enters the journey.',
+    summary: 'Three-tier suppression model — Hard → Channel → Journey — applied in strict order before any player enters. Conflating tiers is a compliance risk.',
     readTime: 3,
     content: [
       {
         type: 'paragraph',
-        text: 'Before any player enters the journey, five suppression layers are applied in sequence. Hard suppressions are always checked first — no exceptions. Channel-level opt-outs are respected throughout, keeping players eligible for available channels rather than blocking them entirely.',
+        text: 'Suppression is layered in three tiers and applied in strict sequence. Hard suppressions are non-negotiable, channel suppressions sit below that and journey suppressions handle operational conflicts. The layering matters because conflating the tiers creates compliance risk.',
       },
       {
         type: 'table',
-        headers: ['Layer', 'Rule'],
+        headers: ['Tier', 'Layer', 'Rule'],
         rows: [
-          ['Eligible Audience', 'Registered player, valid account, 21+ days since last purchase, previous purchase history'],
-          ['Hard Suppressions', 'Responsible gaming restriction, self-exclusion, cooling-off, fraud / risk flag, unresolved KYC, legal / geographic restriction'],
-          ['Channel Suppressions', 'Do not send through channels where the player is unsubscribed or not opted in — keep them eligible for available channels'],
-          ['Journey Suppressions', 'Exclude players already reactivated, already in a conflicting critical journey, or allocated to the control group'],
-          ['VIP Routing', 'VIPs are not excluded — they enter a dedicated VIP lane with stronger personalisation and earlier escalation'],
+          ['—', 'Eligible Audience', 'Registered player, valid account, 21+ days since last purchase, previous purchase history'],
+          ['1 — Hard', 'Hard Suppressions', 'RG restriction, self-exclusion, cooling-off, fraud / risk flag, unresolved KYC, legal / geographic restriction — blocks all channels, no exceptions'],
+          ['2 — Channel', 'Channel Suppressions', 'Do not send through channels where the player is unsubscribed or not opted in — player remains eligible for other available channels'],
+          ['3 — Journey', 'Journey Suppressions', 'Exclude players already reactivated, already in a conflicting critical journey, or allocated to the control group'],
+          ['—', 'VIP Routing', 'VIPs are not excluded — they enter a dedicated VIP lane with stronger personalisation and earlier escalation'],
+        ],
+      },
+      {
+        type: 'cards',
+        items: [
+          { title: '⚠️ Why Tiers Must Stay Separate', body: 'Conflating Hard and Channel suppressions is a compliance risk. A self-excluded player must never receive an offer — even if their email is opted in and technically deliverable.' },
+          { title: '📡 Channel Block ≠ Full Block', body: 'A player unsubscribed from email but opted into push is still reachable. Channel suppressions remove one route, not the entire player.' },
+          { title: '🔄 Journey Suppressions Are Operational', body: 'Already reactivated, in a conflicting journey, or in the control group — these are not compliance blocks, they are logic gates to prevent redundant or misleading comms.' },
         ],
       },
     ],
@@ -229,6 +237,17 @@ export const posts: Post[] = [
       {
         type: 'paragraph',
         text: 'Values should be validated against bonus cost, LTV, margin and compliance before launch. Offer type escalates through the journey. Bonus-Sensitive players never receive offer extensions or increases.',
+      },
+      {
+        type: 'bullets',
+        items: [
+          { label: 'VIP', desc: 'High offer ceiling · Escalates every touch · SC Giveaway at Day 8' },
+          { label: 'High Value', desc: 'Boosted Bundle led · 48h expiry · Tournament entry at Day 8' },
+          { label: 'Normal / Core', desc: 'Low-cost mechanics · Scratch Card and Free Spins · Prize Draw' },
+          { label: 'Low Value / Low Intent', desc: 'Content-led · No expensive offers · Challenge tasks only' },
+          { label: 'Bonus-Sensitive', desc: 'Hard capped · One-time only · Never extended or increased' },
+          { label: 'Payment Friction', desc: 'Help-first · No promo until blocker resolved · Scratch Card post-purchase' },
+        ],
       },
       {
         type: 'table',
@@ -559,6 +578,19 @@ export const posts: Post[] = [
           { label: 'Offer Claim & Redemption Rate', desc: 'Is the offer attractive? Do players actually use it?' },
           { label: 'Channel Performance', desc: 'Open · click · push tap · SMS click · onsite engagement by segment' },
           { label: 'Post-Reactivation Retention', desc: '2nd session · 2nd purchase · 7 & 30-day retention' },
+        ],
+      },
+      {
+        type: 'paragraph',
+        text: 'Based on these KPIs — how do we monitor and analyse success?',
+      },
+      {
+        type: 'cards',
+        items: [
+          { title: '① Primary Measure', body: 'Incremental reactivation rate versus the control group — not raw reactivation. The control group is the benchmark; without it, any uplift number is meaningless.' },
+          { title: '② Revenue Windows', body: 'Compare revenue in the 7 and 30 days after reactivation — not just whether the player returned. A low-quality reactivation that generates one purchase and lapses again is not a win.' },
+          { title: '③ Segment-Level Analysis', body: 'Break down results by segment. A strong overall rate can mask a failing segment or a cost-negative reactivation path. Analyse VIP, High Value, Core, and Bonus-Sensitive separately.' },
+          { title: '④ One Variable at a Time', body: 'Avoid comparing total store metrics before and after launch — too many variables change at once. Only change one element per test cycle — offer type, timing, or channel mix — to understand what actually moved performance.' },
         ],
       },
     ],
